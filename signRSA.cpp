@@ -4,8 +4,6 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
-// link it with: -lcrypto -lssl
-
 void hex_dump(const void *data, unsigned size, const unsigned cols, bool numbers)
 {
     if (!data || !size)
@@ -129,7 +127,7 @@ bool equal(unsigned long size, const unsigned char* buf1, const unsigned char* b
 }
 
 int main()
-{   // preparing data to sign with SHA-384 hash (bacause cipher suite is TLS_AES_256_GCM_SHA384)
+{   // preparing data to sign with SHA-384 hash (because cipher suite is TLS_AES_256_GCM_SHA384)
     SHA512_CTX msg_hasher;
     unsigned digest_size = SHA384_DIGEST_LENGTH;
 
@@ -155,7 +153,7 @@ int main()
     SHA384_Final(sign_data + len, &msg_hasher);
     len += digest_size;
 
-    printf("Data to sign -> ");
+    printf("Data to sign: ");
     hex_dump(sign_data, len, 32, 0);
 
     // preparing SHA-256 digest to use in signature (signature scheme is rsa_pss_rsae_sha256)
@@ -202,13 +200,13 @@ int main()
     unsigned char* reference = NULL;
     auto ref_size = file_get_contents("./files/CertificateVerify", &reference);
     if (!reference)
-        printf("Can't load refference file!\n");
+        printf("Can't load reference file!\n");
     else
     {
         if (ref_size > 8)
         ref_size -= 8;
 
-        printf("Refference: ");
+        printf("Reference: ");
         hex_dump(reference + 8, ref_size > 32 ? 32 : ref_size, 32, 0);
         printf("\n%s", equal(32, signature, reference + 8) ? "THIS IS IT! FINALLY!\n" : "THIS IS SHIT! REDO!\n");
         free(reference);
